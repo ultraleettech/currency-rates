@@ -1,6 +1,8 @@
 # CurrencyRates
 A PHP library for interacting with various currency exchange rates APIs. It provides a simple factory interface for constructing a wrapper for a chosen service which exposes a simple unified API for querying currency exchange rates.
 
+Note: this package is currently only available for Laravel applications. Technically, it is possible to use in other types of projects, but doing so is currently not supported, mainly for extensibility reasons. Non-Laravel support is currently under development and should be available shortly.
+
 ## Services
 Currently available:
 - [Fixer.io](http://www.fixer.io)
@@ -37,7 +39,7 @@ The CurrencyRates API exposes two methods for each service driver. One is used f
 
 ### Latest/current Rates
 
-To get the latest rates for the default base currency (EUR), from the <fixer.io> API, all you need to do is this:
+To get the latest rates for the default base currency (EUR), from the [fixer.io](http://www.fixer.io) API, all you need to do is this:
 
 ```php
 use CurrencyRates;
@@ -91,3 +93,47 @@ $gbp = $result->getRate('GBP'); // Rate for the specific currency, or null if no
 ## Exceptions
 
 CurrencyRate provides 2 exceptions it can throw when encountering errors. `ConnectionException` is thrown when there is a problem connecting to the API end point. For invalid requests and unexpected responses, it throws a `ResponseException`.
+
+## Custom Providers
+
+Creating your own driver is easy. To get started, copy the `srt/Providers/FixerProvider.php` to your Laravel project, and name it by the service you want to support. Let's call it `FooProvider` and save it as `app/Currency/FooProvider.php`.
+
+Now, edit the contents of the file to rename the class and provide your implementation. If the API requires no configuration (such as App ID or API key), it should be straight forward enough. Otherwise, you can add your configuration as an argument to your constructor:
+
+```php
+protected $config;
+
+public function __construct(GuzzleClient $guzzle, $config)
+{
+    $this->guzzle = $guzzle;
+    $this->config = $config;
+}
+```
+
+Then, add this configuration to your `config/services.php`:
+
+```php
+'foo' => [
+    'api_id' => env('FOO_API_ID'),
+    'api_key' => env('FOO_API_KEY'),
+],
+```
+
+Finally, you will need to register your new provider. To do so, either create a new Laravel service provider, or use your application service provider in `app/Providers/AppServiceProvider.php`. Add the following to the boot() method:
+
+```php
+use Ultraleet\CurrencyRates\CurrencyRatesManager;
+use GuzzleHttp\Client as GuzzleClient;
+use App\Currency\FooProvider;
+
+public function boot(CurrencyRatesManager $manager)
+{
+    $manager->extend('foo', function ($app) {
+        return new FooProvider(new GuzzleClient, config('services.foo'));
+    });
+}
+```
+
+Note, that if your API doesn't require any configuration, simply omit the second argument. Basically, use whatever signature you set your provider's constructor up to require.
+
+That's it! You can now consruct your custom driver with `\CurrencyRates::driver('foo')`.
