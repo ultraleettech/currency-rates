@@ -1,0 +1,23 @@
+{
+    "name": "ultraleet/currency-rates",
+    "description": "Library for interacting with various currency exchange rates APIs",
+    "license": "MIT",
+    "keywords": ["currency", "rates", "api", "fixer", "fixerio", "laravel"],
+    "authors": [
+        {
+            "name": "Rene Aavik",
+            "email": "renx81@gmail.com",
+            "homepage": "https://github.com/ultraleettech/"
+        }
+    ],
+    "require": {
+        "php": "^7.0",
+        "guzzlehttp/guzzle": "~6.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Ultraleet\\CurrencyRates\\": "src"
+        }
+    },
+    "minimum-stability": "stable"
+}
