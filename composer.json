@@ -19,5 +19,15 @@
             "Ultraleet\\CurrencyRates\\": "src"
         }
     },
-    "minimum-stability": "stable"
+    "minimum-stability": "stable",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Ultraleet\\CurrencyRates\\CurrencyRatesServiceProvider"
+            ],
+            "aliases": {
+                "CurrencyRates": "Ultraleet\\CurrencyRates\\Facades\\CurrencyRates"
+            }
+        }
+    }
 }
