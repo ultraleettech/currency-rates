@@ -8,7 +8,7 @@ use Ultraleet\CurrencyRates\Contracts\Factory;
 class CurrencyRatesServiceProvider extends ServiceProvider
 {
     /**
-     * Indicates if loading of the provider is deferred.
+     * Indicates that loading of the provider is deferred.
      *
      * @var bool
      */

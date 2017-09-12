@@ -14,12 +14,12 @@ interface Result
     /**
      * Get the date of the rates.
      *
-     * @return DateTime
+     * @return \DateTime
      */
     public function getDate();
 
     /**
-     * Get the all requested currency rates.
+     * Get all requested currency rates.
      *
      * @return array
      */

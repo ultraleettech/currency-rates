@@ -8,20 +8,20 @@ use DateTime;
 class Result implements ResultContract
 {
     /**
-     * The Base currency the result was returned in
+     * The base currency the result was returned in.
      * @var string
      */
     protected $base;
 
     /**
-     * The date the result was generated for
-     * @var DateTime
+     * The date the result was generated for.
+     * @var \DateTime
      */
 
     protected $date;
 
     /**
-     * All of the rates returned
+     * All of the rates returned.
      * @var array
      */
     protected $rates;
@@ -30,7 +30,7 @@ class Result implements ResultContract
      * Result constructor.
      *
      * @param string $base
-     * @param DateTime $date
+     * @param \DateTime $date
      * @param array $rates
      */
     public function __construct($base, DateTime $date, $rates)
@@ -61,7 +61,7 @@ class Result implements ResultContract
     }
 
     /**
-     * Get the all requested currency rates.
+     * Get all requested currency rates.
      *
      * @return array
      */
