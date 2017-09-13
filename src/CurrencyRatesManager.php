@@ -7,40 +7,61 @@ use Ultraleet\CurrencyRates\Providers\DummyProvider;
 use Ultraleet\CurrencyRates\Providers\FixerProvider;
 use Illuminate\Support\Manager;
 use GuzzleHttp\Client as GuzzleClient;
-use InvalidArgumentException;
+use Closure;
 
 class CurrencyRatesManager extends Manager implements Factory
 {
+    /**
+     * The CurrencyRates factory instance.
+     *
+     * @var \Ultraleet\CurrencyRates\CurrencyRates
+     */
+    protected $factory;
 
     /**
-     * Create an instance of the specified driver.
+     * Create a new manager instance.
      *
-     * @return \Laravel\Socialite\One\AbstractProvider
+     * @param  \Illuminate\Foundation\Application     $app
+     * @return void
      */
-    protected function createFixerDriver()
+    public function __construct($app)
     {
-        return new FixerProvider(new GuzzleClient());
+        $this->app = $app;
+        $this->factory = new CurrencyRates;
     }
 
     /**
-     * Create an instance of the specified driver.
+     * Get a driver instance.
      *
-     * @return \Laravel\Socialite\One\AbstractProvider
+     * @param  string  $driver
+     * @return mixed
      */
-    protected function createDummyDriver()
+    public function driver($driver = null)
     {
-        return new DummyProvider();
+        return $this->factory->driver($driver);
     }
 
     /**
      * Get the default driver name.
      *
-     * @throws \InvalidArgumentException
-     *
      * @return string
      */
     public function getDefaultDriver()
     {
-        throw new InvalidArgumentException('No CurrencyRates API driver was specified.');
+        return $this->factory->getDefaultDriver();
+    }
+
+    /**
+     * Register a custom driver creator Closure.
+     *
+     * @param  string    $driver
+     * @param  \Closure  $callback
+     * @return $this
+     */
+    public function extend($driver, Closure $callback)
+    {
+        $this->factory->extend($driver, $callback);
+
+        return $this;
     }
 }
