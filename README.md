@@ -1,7 +1,8 @@
 # CurrencyRates
-A PHP library for interacting with various currency exchange rates APIs. It provides a simple factory interface for constructing a wrapper for a chosen service which exposes a simple unified API for querying currency exchange rates.
 
-Note: this package is currently only available for Laravel applications. Technically, it is possible to use it in other types of projects, but doing so is currently not supported, mainly for extensibility reasons. Non-Laravel support is currently under development and should be available shortly.
+[![Build Status](https://travis-ci.org/ultraleettech/currency-rates.svg)](https://travis-ci.org/ultraleettech/currency-rates)
+
+A PHP library for interacting with various currency exchange rates APIs. It provides a simple factory interface for constructing a wrapper for a chosen service which exposes a simple unified API for querying currency exchange rates.
 
 ## Services
 Currently available:
@@ -34,6 +35,16 @@ Also, in the same file, add the `CurrencyRates` facade into the `aliases` array:
 ```
 
 ## Usage
+
+CurrencyRates was initially created as a Laravel package. Thus, it comes shipped with the usual goodies that come with the territory, such as a service provider for convenient registration with the service container, as well as a facade for simple global access. The following examples use the facade format (`CurrencyRates::driver...`). If you are using the package in a non-laravel context, you should construct the component first, and then call the methods on the instance, like so:
+
+```php
+use Ultraleet\CurrencyRates\CurrencyRates;
+
+$currencyRates = new CurrencyRates;
+
+$currencyRates->driver();
+```
 
 The CurrencyRates API exposes two methods for each service driver. One is used for querying the latest exchange rates, and the other is for retrieving historical data.
 
@@ -104,6 +115,8 @@ CurrencyRate provides 2 exceptions it can throw when encountering errors. `Conne
 
 ## Custom Providers
 
+### Laravel
+
 Creating your own driver is easy. To get started, copy the `srt/Providers/FixerProvider.php` to your Laravel project, and name it by the service you want to support. Let's call it `FooProvider` and save it as `app/Currency/FooProvider.php`.
 
 Now, edit the contents of the file to rename your class and provide your implementation. If the API you are connecting to requires no configuration (such as App ID or API key), it should be straight forward enough. Otherwise, you can add your configuration as an argument to your constructor:
@@ -145,3 +158,28 @@ public function boot(CurrencyRatesManager $manager)
 Note, that if your API doesn't require any configuration, simply omit the second argument. Basically, use whatever signature you set your provider's constructor up to require.
 
 That's it! You can now construct your custom driver with `\CurrencyRates::driver('foo')`.
+
+### Non-Laravel Projects
+
+Creating the actual driver is identical to how you would approach this in a Laravel application, so refer to the above instructions for that. Registering the extension is different, however, and the actual details might vary, depending on the actual environment you are using.
+
+Obviously, you will need to register the custom driver before using it. The following code should suffice:
+
+```php
+use Ultraleet\CurrencyRates\CurrencyRates;
+use GuzzleHttp\Client as GuzzleClient;
+use Namespace\Path\FooProvider;         // replace with your actual class path
+
+$config = [...];
+
+$currencyRates = new CurrencyRates;
+
+$currencyRates->extend('foo', function () use ($config) {
+    return new FooProvider(new GuzzleClient, $config);
+});
+
+// use the driver
+$currencyRates->driver('foo');
+```
+
+The above is a very rough outline of how to implement this. Depending on your application, your implementation will probably differ substantially. For instance, you might want to register the driver as part of your application bootstrap process, bind the object to your service container, and then inject it as a dependency when you need to use it. Since the custom driver will be lost should you re-construct the object later on, you will at the very least want to ensure that you'll be using the same instance.
