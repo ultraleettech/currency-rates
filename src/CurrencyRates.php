@@ -7,6 +7,7 @@ use Ultraleet\CurrencyRates\Providers\DummyProvider;
 use Ultraleet\CurrencyRates\Providers\FixerProvider;
 use GuzzleHttp\Client as GuzzleClient;
 use Closure;
+use InvalidArgumentException;
 
 class CurrencyRates implements Factory
 {
@@ -15,7 +16,7 @@ class CurrencyRates implements Factory
      *
      * @var array
      */
-    protected $customCreators = [];
+    protected static $customCreators = [];
 
     /**
      * The array of created "drivers".
@@ -81,10 +82,9 @@ class CurrencyRates implements Factory
      */
     protected function createDriver($driver)
     {
-        // We'll check to see if a creator method exists for the given driver. If not we
-        // will check for a custom driver creator, which allows developers to create
-        // drivers using their own customized driver creator Closure to create it.
-        if (isset($this->customCreators[$driver])) {
+        // First, we will check if a custom creator has been created for the
+        // specified driver. If not, we will create a native driver instead.
+        if (isset(static::$customCreators[$driver])) {
             return $this->callCustomCreator($driver);
         } else {
             $method = 'create' . static::studlyCase($driver) . 'Driver';
@@ -104,7 +104,7 @@ class CurrencyRates implements Factory
      */
     protected function callCustomCreator($driver)
     {
-        return $this->customCreators[$driver]();
+        return static::$customCreators[$driver]();
     }
 
     /**
@@ -116,7 +116,7 @@ class CurrencyRates implements Factory
      */
     public function extend($driver, Closure $callback)
     {
-        $this->customCreators[$driver] = $callback;
+        static::$customCreators[$driver] = $callback;
 
         return $this;
     }
