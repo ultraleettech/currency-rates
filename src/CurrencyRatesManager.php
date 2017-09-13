@@ -52,6 +52,16 @@ class CurrencyRatesManager extends Manager implements Factory
     }
 
     /**
+     * Get all of the created "drivers".
+     *
+     * @return array
+     */
+    public function getDrivers()
+    {
+        return $this->factory->getDrivers();
+    }
+
+    /**
      * Register a custom driver creator Closure.
      *
      * @param  string    $driver

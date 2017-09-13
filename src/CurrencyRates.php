@@ -16,14 +16,21 @@ class CurrencyRates implements Factory
      *
      * @var array
      */
-    protected static $customCreators = [];
+    protected $customCreators = [];
 
     /**
-     * The array of created "drivers".
+     * The array of created drivers.
      *
      * @var array
      */
     protected $drivers = [];
+
+    /**
+     * The name of the default driver.
+     *
+     * @var string
+     */
+    protected $defaultDriver = 'fixer';
 
     /**
      * Create an instance of the specified driver.
@@ -52,7 +59,19 @@ class CurrencyRates implements Factory
      */
     public function getDefaultDriver()
     {
-        return 'fixer';
+        return $this->defaultDriver;
+    }
+
+    /**
+     * Set the default driver name.
+     *
+     * @param string
+     */
+    public function setDefaultDriver($name)
+    {
+        $this->defaultDriver = $name;
+
+        return $this;
     }
 
     /**
@@ -84,7 +103,7 @@ class CurrencyRates implements Factory
     {
         // First, we will check if a custom creator has been created for the
         // specified driver. If not, we will create a native driver instead.
-        if (isset(static::$customCreators[$driver])) {
+        if (isset($this->customCreators[$driver])) {
             return $this->callCustomCreator($driver);
         } else {
             $method = 'create' . static::studlyCase($driver) . 'Driver';
@@ -104,7 +123,7 @@ class CurrencyRates implements Factory
      */
     protected function callCustomCreator($driver)
     {
-        return static::$customCreators[$driver]();
+        return $this->customCreators[$driver]();
     }
 
     /**
@@ -116,13 +135,13 @@ class CurrencyRates implements Factory
      */
     public function extend($driver, Closure $callback)
     {
-        static::$customCreators[$driver] = $callback;
+        $this->customCreators[$driver] = $callback;
 
         return $this;
     }
 
     /**
-     * Get all of the created "drivers".
+     * Get all of the created drivers.
      *
      * @return array
      */

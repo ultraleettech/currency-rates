@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase as PHPUnit_Framework_TestCase;
 class CurrencyRatesTest extends PHPUnit_Framework_TestCase
 {
     protected $factory;
+    protected $properties;
 
     protected function setUp()
     {
@@ -18,6 +19,13 @@ class CurrencyRatesTest extends PHPUnit_Framework_TestCase
     protected function tearDown()
     {
         unset($this->factory);
+    }
+
+    protected function extend()
+    {
+        $this->factory->extend('test', function () {
+            return new TestProviderStub;
+        });
     }
 
     public function testDriverWithoutParametersReturnsFixerProviderInstance()
@@ -44,13 +52,36 @@ class CurrencyRatesTest extends PHPUnit_Framework_TestCase
 
     public function testExtendRegistersCustomDriverThatCanBeCreatedWithDriver()
     {
-        $this->factory->extend('test', function () {
-            return new TestProviderStub;
-        });
-
+        $this->extend();
         $provider = $this->factory->driver('test');
 
         $this->assertInstanceOf('Tests\Fixtures\TestProviderStub', $provider);
         $this->assertInstanceOf('Ultraleet\CurrencyRates\AbstractProvider', $provider);
+    }
+
+    public function testSetDefaultDriver()
+    {
+        $this->extend();
+        $provider = $this->factory->setDefaultDriver('test')->driver();
+
+        $this->assertInstanceOf('Tests\Fixtures\TestProviderStub', $provider);
+    }
+
+    public function testCallDefaultDriverMethodsDirectly()
+    {
+        $this->extend();
+        $result = $this->factory->setDefaultDriver('test')->latest();
+
+        $this->assertEquals(1.1933, $result->getRate('USD'));
+    }
+
+    public function testGetDriversReturnsArrayOfCreatedDrivers()
+    {
+        $this->extend();
+        $this->factory->setDefaultDriver('test');
+        $this->factory->driver();
+        $this->factory->driver('dummy');
+
+        $this->assertEquals(['test', 'dummy'], array_keys($this->factory->getDrivers()));
     }
 }
