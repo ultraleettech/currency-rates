@@ -19,6 +19,11 @@
             "Ultraleet\\CurrencyRates\\": "src"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
     "minimum-stability": "stable",
     "extra": {
         "laravel": {
@@ -29,5 +34,9 @@
                 "CurrencyRates": "Ultraleet\\CurrencyRates\\Facades\\CurrencyRates"
             }
         }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.3",
+        "mockery/mockery": "^0.9.9"
     }
 }
