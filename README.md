@@ -212,4 +212,6 @@ class ExtendedCurrencyRates extends CurrencyRates
 } 
 ```
 
+(Note: driver name strings (when calling the `driver('name')` method) are in *snake_case* while they are expected to be in *StudlyCase* in the above `create[Name]Driver()` method. *'my_provider'* hence becomes *createMyProvider()*, and vice-versa.)
+
 Then, all you need to do is register or instantiate the extended service instead of the original one.
