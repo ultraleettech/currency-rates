@@ -15,6 +15,6 @@ class TestProviderStub extends AbstractProvider
 
     public function historical($date, $base = 'EUR', $targets = [])
     {
-        return new Result($base, new DateTime($date), ['USD' => 1.1933]);
+        return new Result($base, $date, ['USD' => 1.1933]);
     }
 }
