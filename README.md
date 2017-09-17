@@ -38,17 +38,55 @@ Also, in the same file, add the `CurrencyRates` facade into the `aliases` array:
 'CurrencyRates' => Ultraleet\CurrencyRates\Facades\CurrencyRates::class,
 ```
 
-## Usage
+## Getting Started
 
-CurrencyRates was initially created as a Laravel package. Thus, it comes shipped with the usual goodies that come with the territory, such as a service provider for convenient registration with the service container, as well as a facade for simple global access. The following examples use the facade format (`CurrencyRates::driver...`). If you are using the package in a non-laravel context, you should construct the component first, and then call the methods on the instance, like so:
+### Laravel
+
+CurrencyRates comes shipped with a service provider that conveniently registers the component with Laravel's service container, as well as a facade for global access. Hence, it requires no further setup.
+
+### Symfony
+
+You will need to configure your service container to load CurrencyRates when needed. To do that, simply append this to your `services.yml` config file:
+
+```yaml
+    currency_rates:
+        class: Ultraleet\CurrencyRates\CurrencyRates
+        public: true    # Symfony 3.3+
+```
+
+The last line is optional and only required if you wish to fetch the service directly from the service container (*e.g.* via `$this->get('currency_rates')` in your controllers). However, it is recommended to use service injection instead.
+
+You can now inject it into your service contructors or controller actions:
+
+```php
+use Ultraleet\CurrencyRates\CurrencyRates;
+
+class YourService
+{
+    private $currencyRates;
+
+    public function __construct(CurrencyRates $currencyRates)
+    {
+        $this->currencyRates = $currencyRates;
+    }
+}
+```
+
+### Other
+
+Most modern frameworks are designed using the [Inversion of Control](https://en.wikipedia.org/wiki/Inversion_of_control) principle and implement some sort of a service container that can be used to locate services and/or inject dependencies. You should therefore register CurrencyRates with that service container. The details vary depending on the framework; you should look it up in the documentation if you don't know how to do that. You can refer to the instructions for Symfony above for general guidelines.
+
+If you are not using a framework, it is still recommended to implement those principles into your projects. However, if that would be overkill for your simple project, or you simply don't want to / can't do that for some reason, you can simply construct CurrencyRates service directly, whenever needed:
 
 ```php
 use Ultraleet\CurrencyRates\CurrencyRates;
 
 $currencyRates = new CurrencyRates;
-
-$currencyRates->driver();
 ```
+
+## Usage
+
+The following code snippets assume that you have your service object instantiated somehow (*e.g.* via dependency injection or by fetching from a service container) and stored in a variable called `$currencyRates`. If you are using Laravel, you can skip all that, and simply replace `$currencyRates->...` with `CurrencyRates::...` to use the facade instead. 
 
 The CurrencyRates API exposes two methods for each service driver. One is used for querying the latest exchange rates, and the other is for retrieving historical data.
 
@@ -57,25 +95,19 @@ The CurrencyRates API exposes two methods for each service driver. One is used f
 To get the latest rates for the default base currency (EUR), from the [fixer.io](http://fixer.io) API, all you need to do is this:
 
 ```php
-use CurrencyRates;
-
-$result = CurrencyRates::driver('fixer')->latest();
+$result = $currencyRates->driver('fixer')->latest();
 ```
 
 To get the rates for a different base currency, you will need to provide its code as the first argument:
 
 ```php
-use CurrencyRates;
-
-$result = CurrencyRates::driver('fixer')->latest('USD');
+$result = $currencyRates->driver('fixer')->latest('USD');
 ```
 
 These calls return the rates for all currencies provided by the service driver. You can optionally specify the target currencies in an array as the second argument:
 
 ```php
-use CurrencyRates;
-
-$result = CurrencyRates::driver('fixer')->latest('USD', ['EUR', 'GBP']);
+$result = $currencyRates->driver('fixer')->latest('USD', ['EUR', 'GBP']);
 ```
 
 ### Historical Rates
@@ -83,12 +115,9 @@ $result = CurrencyRates::driver('fixer')->latest('USD', ['EUR', 'GBP']);
 Historical rates are provided via the `historical()` driver method. This method takes date (as a DateTime object) as its first argument, and optional base and target currencies as its second and third arguments:
 
 ```php
-use CurrencyRates;
-use DateTime;
-
-$result = CurrencyRates::driver('fixer')->historical(new DateTime('2001-01-03'));
-$result = CurrencyRates::driver('fixer')->historical(new DateTime('2001-01-03'), 'USD');
-$result = CurrencyRates::driver('fixer')->historical(new DateTime('2001-01-03'), 'USD', ['EUR', 'GBP']);
+$result = $currencyRates->driver('fixer')->historical(new \DateTime('2001-01-03'));
+$result = $currencyRates->driver('fixer')->historical(new \DateTime('2001-01-03'), 'USD');
+$result = $currencyRates->driver('fixer')->historical(new \DateTime('2001-01-03'), 'USD', ['EUR', 'GBP']);
 ```
 
 ## Response
@@ -96,13 +125,11 @@ $result = CurrencyRates::driver('fixer')->historical(new DateTime('2001-01-03'),
 Rates are returned as an object of class `Response`. It provides 3 methods to get the data provided by the API call:
 
 ```php
-use CurrencyRates;
-
-$result = CurrencyRates::driver('fixer')->latest('USD', ['EUR', 'GBP']);
+$result = $currencyRates->driver('fixer')->latest('USD', ['EUR', 'GBP']);
 
 $date = $result->getDate();     // Contains the date as a DateTime object
 $rates = $result->getRates();   // Array of exchange rates
-$gbp = $result->getRate('GBP'); // Rate for the specific currency, or null if none was provided/asked for
+$gbp = $result->getRate('GBP'); // Rate for the specific currency, or null if none was provided/requested
 ```
 
 It also implements a magic getter for conveniently retrieving the results as properties. You can thus simply write the following:
@@ -121,9 +148,9 @@ CurrencyRate provides 2 exceptions it can throw when encountering errors. `Conne
 
 ### Laravel
 
-Creating your own driver is easy. To get started, copy the `srt/Providers/FixerProvider.php` to your Laravel project, and name it by the service you want to support. Let's call it `FooProvider` and save it as `app/Currency/FooProvider.php`.
+Creating your own driver is easy. To get started, copy the `src/Providers/FixerProvider.php` file to your Laravel project, and name it by the service you want to support. Let's call it `FooProvider` and save it as `app/Currency/FooProvider.php`.
 
-Now, edit the contents of the file to rename your class and provide your implementation. If the API you are connecting to requires no configuration (such as App ID or API key), it should be straight forward enough. Otherwise, you can add your configuration as an argument to your constructor:
+Now, edit the contents of the file to rename the class and provide your implementation. If the API you are connecting to requires no configuration (such as an App ID or API key), it should be straight forward enough. Otherwise, you can add your configuration as an argument to your constructor:
 
 ```php
 protected $config;
@@ -165,25 +192,24 @@ That's it! You can now construct your custom driver with `\CurrencyRates::driver
 
 ### Non-Laravel Projects
 
-Creating the actual driver is identical to how you would approach this in a Laravel application, so refer to the above instructions for that. Registering the extension is different, however, and the actual details might vary, depending on the actual environment you are using.
-
-Obviously, you will need to register the custom driver before using it. The following code should suffice:
+Creating the actual driver is pretty much identical to how you would approach this in a Laravel application, so refer to the above instructions for that. However, instead of registering the driver via the extend method (which is also provided by the `CurrencyRates` class with an identical implementation except for one difference - the closure you provide does not take the `$app` argument), it might be easier to simply extend the base class itself, and implement a `create[Name]Driver()` method for constructing the provider instance:
 
 ```php
 use Ultraleet\CurrencyRates\CurrencyRates;
 use GuzzleHttp\Client as GuzzleClient;
-use Namespace\Path\FooProvider;         // replace with your actual class path
+use Namespace\Path\To\FooProvider;      // replace with your actual class path
 
-$config = [...];
+class ExtendedCurrencyRates extends CurrencyRates
+{
+    protected function createFooDriver()
+    {
+        // fetch (e.g. from environment or application config), if needed:
+        $config = ...
 
-$currencyRates = new CurrencyRates;
+        return new FooProvider(new GuzzleClient, $config);
+    }
 
-$currencyRates->extend('foo', function () use ($config) {
-    return new FooProvider(new GuzzleClient, $config);
-});
-
-// use the driver
-$currencyRates->driver('foo');
+} 
 ```
 
-The above is a very rough outline of how to implement this. Depending on your application, your implementation will probably differ substantially. For instance, you might want to register the driver as part of your application bootstrap process, bind the object to your service container, and then inject it as a dependency when you need to use it. Since the custom driver will be lost should you re-construct the object later on, you will at the very least want to ensure that you'll be using the same instance.
+Then, all you need to do is register or instantiate the extended service instead of the original one.
