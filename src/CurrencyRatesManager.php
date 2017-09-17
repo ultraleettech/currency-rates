@@ -21,7 +21,7 @@ class CurrencyRatesManager extends Manager implements Factory
     /**
      * Create a new manager instance.
      *
-     * @param  \Illuminate\Foundation\Application     $app
+     * @param  \Illuminate\Foundation\Application   $app
      * @return void
      */
     public function __construct($app)
@@ -52,7 +52,19 @@ class CurrencyRatesManager extends Manager implements Factory
     }
 
     /**
-     * Get all of the created "drivers".
+     * Set the default driver name.
+     *
+     * @param string
+     */
+    public function setDefaultDriver($name)
+    {
+        $this->factory->setDefaultDriver($name);
+
+        return $this;
+    }
+
+    /**
+     * Get all of the created drivers.
      *
      * @return array
      */
