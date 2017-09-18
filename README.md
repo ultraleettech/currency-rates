@@ -106,7 +106,7 @@ Note, that you will only need to provide configuration to a driver once per requ
 To get the latest rates for the default base currency (EUR), from the [fixer.io](http://fixer.io) API, all you need to do is this:
 
 ```php
-$currencyRates->driver('fixer')->get();
+$result = $currencyRates->driver('fixer')->get();
 
 // this also works:
 $result = $currencyRates->driver('fixer')->latest();
@@ -115,7 +115,7 @@ $result = $currencyRates->driver('fixer')->latest();
 To get the rates for a different base currency:
 
 ```php
-$currencyRates->driver('fixer')->base('USD')->get();
+$result = $currencyRates->driver('fixer')->base('USD')->get();
 
 // this also works:
 $result = $currencyRates->driver('fixer')->latest('USD');
@@ -150,7 +150,7 @@ $result = $currencyRates->driver('fixer')->historical(new \DateTime('2001-01-03'
 $result = $currencyRates->driver('fixer')->historical(new \DateTime('2001-01-03'), 'USD', ['EUR']);
 ```
 
-### Fluid Interface Notes
+### Fluent Interface Notes
 
 The `base`, `target`, and `date` methods set the values of the parameters used in the API query performed by the `get` method. This means, that any previous values that have not been explicitly reset will be reused when making subsequent calls to the API.
 
@@ -189,13 +189,13 @@ CurrencyRate provides 2 exceptions it can throw when encountering errors. `Conne
 
 Creating your own driver is easy. To get started, copy the `src/Providers/FixerProvider.php` file to your Laravel project, and name it by the service you want to support. Let's call it `FooProvider` and save it as `app/Currency/FooProvider.php`.
 
-Now, edit the contents of the file to rename the class and provide your implementation. You will notice, that the only methods implemented there are `latest` and `historical` - you should never need to override any fluent interface methods, as those are simply proxies for the lower level `latest`/`historical` calls issued by the `get` method in `AbstractProvider`.
+Now, edit the contents of the file to rename the class and provide your implementation. You will notice that the only methods implemented there are `latest` and `historical` - you should never need to override any of the fluent interface methods, since those are simply proxies for the lower level `latest`/`historical` calls issued by the `get` method in `AbstractProvider`.
 
-If the API you are connecting to requires configuration (such as an App ID or API key), you can access the data passed via the `AbstractProvider::configure()` method in `$this->config`.
+If the API you are connecting to requires any configuration (such as an app ID or API key), you can access the data passed via the `AbstractProvider::configure()` method stored in `$this->config`.
 
 ### Laravel
 
-Finally, you will need to register your new provider. To do so, either create a new Laravel service provider, or use your application service provider in `app/Providers/AppServiceProvider.php`. Add the following to the boot() method:
+Finally, you will need to register your new driver. To do so, either create a new Laravel service provider, or use your application service provider in `app/Providers/AppServiceProvider.php`. Add the following to the boot() method:
 
 ```php
 use Ultraleet\CurrencyRates\CurrencyRatesManager;
@@ -231,6 +231,6 @@ class ExtendedCurrencyRates extends CurrencyRates
 } 
 ```
 
-(Note: driver name strings (when calling the `driver('name')` method) are in *snake_case* while they are expected to be in *StudlyCase* in the above `create[Name]Driver()` method. *'my_provider'* hence becomes *createMyProvider()*, and vice-versa.)
+(Note: driver name strings (when calling the `driver('name')` method) are in *snake_case* while they are expected to be in *StudlyCase* in the above `create[Name]Driver` method name. A driver called *'my_provider'* is hence constructed in a method called *createMyProvider()*.)
 
 Then, all you need to do is register or instantiate the extended service instead of the original one.
