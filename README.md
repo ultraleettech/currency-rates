@@ -86,9 +86,20 @@ $currencyRates = new CurrencyRates;
 
 ## Usage
 
-The following code snippets assume that you have your service object instantiated somehow (*e.g.* via dependency injection or by fetching from a service container) and stored in a variable called `$currencyRates`. If you are using Laravel, you can skip all that, and simply replace `$currencyRates->...` with `CurrencyRates::...` to use the facade instead. 
-
 The CurrencyRates API exposes two methods for each service driver. One is used for querying the latest exchange rates, and the other is for retrieving historical data.
+
+Note, that the following code snippets assume that you have your service object instantiated somehow (*e.g.* via dependency injection or by fetching from a service container) and stored in a variable called `$currencyRates`. If you are using Laravel, you can skip all that, and simply replace `$currencyRates->...` with `CurrencyRates::...` to use the facade instead. 
+
+### Configuration
+
+Some drivers require configuration to connect to the API, such as an app ID or API key. To provide one, you can simply chain in a `configure()` call right after instantiating the driver:
+
+```php
+$config = config('services.foo'); // Laravel example for fetching the config array
+$result = $currencyRates->driver('foo')->configure($config)->...
+```
+
+Note, that you will only need to provide configuration to a driver once per request cycle. Subsequent API calls will remember the config.
 
 ### Latest/Current Rates
 
@@ -119,17 +130,6 @@ $result = $currencyRates->driver('fixer')->historical(new \DateTime('2001-01-03'
 $result = $currencyRates->driver('fixer')->historical(new \DateTime('2001-01-03'), 'USD');
 $result = $currencyRates->driver('fixer')->historical(new \DateTime('2001-01-03'), 'USD', ['EUR', 'GBP']);
 ```
-
-### Configuration
-
-Some drivers require configuration to connect to the API, such as an app ID or API key. To provide one, you can simply chain in a `configure()` call right after instantiating the driver:
-
-```php
-$config = config('services.foo'); // Laravel example for fetching the config array
-$result = $currencyRates->driver('foo')->configure($config)->...
-```
-
-Note, that you will only need to provide configuration to a driver once per request cycle. Subsequent API calls will remember the config.
 
 ## Response
 
