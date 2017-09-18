@@ -9,7 +9,6 @@ use PHPUnit\Framework\TestCase as PHPUnit_Framework_TestCase;
 class CurrencyRatesTest extends PHPUnit_Framework_TestCase
 {
     protected $factory;
-    protected $properties;
 
     protected function setUp()
     {

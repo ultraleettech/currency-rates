@@ -120,6 +120,17 @@ $result = $currencyRates->driver('fixer')->historical(new \DateTime('2001-01-03'
 $result = $currencyRates->driver('fixer')->historical(new \DateTime('2001-01-03'), 'USD', ['EUR', 'GBP']);
 ```
 
+### Configuration
+
+Some drivers require configuration to connect to the API, such as an app ID or API key. To provide one, you can simply chain in a `configure()` call right after instantiating the driver:
+
+```php
+$config = config('services.foo'); // Laravel example for fetching the config array
+$result = $currencyRates->driver('foo')->configure($config)->...
+```
+
+Note, that you will only need to provide configuration to a driver once per request cycle. Subsequent API calls will remember the config.
+
 ## Response
 
 Rates are returned as an object of class `Response`. It provides 3 methods to get the data provided by the API call:
@@ -146,30 +157,11 @@ CurrencyRate provides 2 exceptions it can throw when encountering errors. `Conne
 
 ## Custom Providers
 
-### Laravel
-
 Creating your own driver is easy. To get started, copy the `src/Providers/FixerProvider.php` file to your Laravel project, and name it by the service you want to support. Let's call it `FooProvider` and save it as `app/Currency/FooProvider.php`.
 
-Now, edit the contents of the file to rename the class and provide your implementation. If the API you are connecting to requires no configuration (such as an App ID or API key), it should be straight forward enough. Otherwise, you can add your configuration as an argument to your constructor:
+Now, edit the contents of the file to rename the class and provide your implementation. Note, that if the API you are connecting to requires configuration (such as an App ID or API key), you can access the data passed via the `AbstractProvider::configure()` method in `$this->config`.
 
-```php
-protected $config;
-
-public function __construct(GuzzleClient $guzzle, $config)
-{
-    $this->guzzle = $guzzle;
-    $this->config = $config;
-}
-```
-
-Then, add the configuration you need into `config/services.php`:
-
-```php
-'foo' => [
-    'api_id' => env('FOO_API_ID'),
-    'api_key' => env('FOO_API_KEY'),
-],
-```
+### Laravel
 
 Finally, you will need to register your new provider. To do so, either create a new Laravel service provider, or use your application service provider in `app/Providers/AppServiceProvider.php`. Add the following to the boot() method:
 
@@ -181,18 +173,16 @@ use App\Currency\FooProvider;
 public function boot(CurrencyRatesManager $manager)
 {
     $manager->extend('foo', function ($app) {
-        return new FooProvider(new GuzzleClient, config('services.foo'));
+        return new FooProvider(new GuzzleClient);
     });
 }
 ```
-
-Note, that if your API doesn't require any configuration, simply omit the second argument. Basically, use whatever signature you set your provider's constructor up to require.
 
 That's it! You can now construct your custom driver with `\CurrencyRates::driver('foo')`.
 
 ### Non-Laravel Projects
 
-Creating the actual driver is pretty much identical to how you would approach this in a Laravel application, so refer to the above instructions for that. However, instead of registering the driver via the extend method (which is also provided by the `CurrencyRates` class with an identical implementation except for one difference - the closure you provide does not take the `$app` argument), it might be easier to simply extend the base class itself, and implement a `create[Name]Driver()` method for constructing the provider instance:
+While you could use the `CurrencyRates::extend()` method to register your custom driver, which works the same as the `CurrencyRatesManager::extend()` for Laravel applications above (except for one difference - the closure you provide does not take the `$app` argument), it might be easier to simply extend the base class itself, and implement a `create[Name]Driver()` method for constructing the provider instance:
 
 ```php
 use Ultraleet\CurrencyRates\CurrencyRates;
@@ -203,10 +193,7 @@ class ExtendedCurrencyRates extends CurrencyRates
 {
     protected function createFooDriver()
     {
-        // fetch (e.g. from environment or application config), if needed:
-        $config = ...
-
-        return new FooProvider(new GuzzleClient, $config);
+        return new FooProvider(new GuzzleClient);
     }
 
 } 

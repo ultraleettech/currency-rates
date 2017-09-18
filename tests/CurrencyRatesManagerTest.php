@@ -3,7 +3,6 @@
 namespace Tests;
 
 use Ultraleet\CurrencyRates\CurrencyRatesManager;
-use Tests\Fixtures\TestProviderStub;
 
 class CurrencyRatesManagerTest extends CurrencyRatesTest
 {
