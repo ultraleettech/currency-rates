@@ -86,7 +86,7 @@ $currencyRates = new CurrencyRates;
 
 ## Usage
 
-The CurrencyRates API exposes two methods for each service driver. One is used for querying the latest exchange rates, and the other is for retrieving historical data.
+In the initial version, the CurrencyRates API exposed two methods for each service driver. One was used for querying the latest exchange rates, and the other for retrieving historical data. Those methods still work, and examples can be found below. However, in version 1.1 we provided a fluent interface for interacting with the API, which the documentation now emphasizes.
 
 Note, that the following code snippets assume that you have your service object instantiated somehow (*e.g.* via dependency injection or by fetching from a service container) and stored in a variable called `$currencyRates`. If you are using Laravel, you can skip all that, and simply replace `$currencyRates->...` with `CurrencyRates::...` to use the facade instead. 
 
@@ -106,29 +106,59 @@ Note, that you will only need to provide configuration to a driver once per requ
 To get the latest rates for the default base currency (EUR), from the [fixer.io](http://fixer.io) API, all you need to do is this:
 
 ```php
+$currencyRates->driver('fixer')->get();
+
+// this also works:
 $result = $currencyRates->driver('fixer')->latest();
 ```
 
-To get the rates for a different base currency, you will need to provide its code as the first argument:
+To get the rates for a different base currency:
 
 ```php
+$currencyRates->driver('fixer')->base('USD')->get();
+
+// this also works:
 $result = $currencyRates->driver('fixer')->latest('USD');
 ```
 
-These calls return the rates for all currencies provided by the service driver. You can optionally specify the target currencies in an array as the second argument:
+These calls return the rates for all currencies provided by the service driver. You can optionally specify the target currencies:
 
 ```php
+$result = $currencyRates->driver('fixer')->target(['USD', 'GBP'])->get();
+$result = $currencyRates->driver('fixer')->base('USD')->target(['EUR', 'GBP'])->get();
+
+// you can provide a single target currency as a string
+$result = $currencyRates->driver('fixer')->target('USD')->get();
+
+// this also works:
 $result = $currencyRates->driver('fixer')->latest('USD', ['EUR', 'GBP']);
 ```
 
 ### Historical Rates
 
-Historical rates are provided via the `historical()` driver method. This method takes date (as a DateTime object) as its first argument, and optional base and target currencies as its second and third arguments:
+For historical rates, you need to specify the date via the `date()` method. This method supports date strings as well as DateTime objects:
 
 ```php
+$result = $currencyRates->driver('fixer')->date('2001-01-03')->get();
+$result = $currencyRates->driver('fixer')->date('2001-01-03')->base('USD')->get();
+$result = $currencyRates->driver('fixer')->date('2001-01-03')->base('USD')->target('EUR')->get();
+
+// Alternatively, you can use the following. Note, that the date provided
+// needs to be a DateTime object in this formulation:
 $result = $currencyRates->driver('fixer')->historical(new \DateTime('2001-01-03'));
 $result = $currencyRates->driver('fixer')->historical(new \DateTime('2001-01-03'), 'USD');
-$result = $currencyRates->driver('fixer')->historical(new \DateTime('2001-01-03'), 'USD', ['EUR', 'GBP']);
+$result = $currencyRates->driver('fixer')->historical(new \DateTime('2001-01-03'), 'USD', ['EUR']);
+```
+
+### Fluid Interface Notes
+
+The `base`, `target`, and `date` methods set the values of the parameters used in the API query performed by the `get` method. This means, that any previous values that have not been explicitly reset will be reused when making subsequent calls to the API.
+
+You can simply set those parameters when you need to query different base/target currencies, or different dates. However, what if you want to query latest rates after making a historical query? Simple - you can just call `date()` without arguments:
+
+```php
+$historical = $currencyRates->driver('fixer')->date('2001-01-03')->get();
+$latest = $currencyRates->driver('fixer')->date()->get();
 ```
 
 ## Response
@@ -159,7 +189,9 @@ CurrencyRate provides 2 exceptions it can throw when encountering errors. `Conne
 
 Creating your own driver is easy. To get started, copy the `src/Providers/FixerProvider.php` file to your Laravel project, and name it by the service you want to support. Let's call it `FooProvider` and save it as `app/Currency/FooProvider.php`.
 
-Now, edit the contents of the file to rename the class and provide your implementation. Note, that if the API you are connecting to requires configuration (such as an App ID or API key), you can access the data passed via the `AbstractProvider::configure()` method in `$this->config`.
+Now, edit the contents of the file to rename the class and provide your implementation. You will notice, that the only methods implemented there are `latest` and `historical` - you should never need to override any fluent interface methods, as those are simply proxies for the lower level `latest`/`historical` calls issued by the `get` method in `AbstractProvider`.
+
+If the API you are connecting to requires configuration (such as an App ID or API key), you can access the data passed via the `AbstractProvider::configure()` method in `$this->config`.
 
 ### Laravel
 

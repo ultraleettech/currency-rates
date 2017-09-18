@@ -10,11 +10,17 @@ class TestProviderStub extends AbstractProvider
 {
     public function latest($base = 'EUR', $targets = [])
     {
-        return new Result($base, new DateTime, ['USD' => 1.1933]);
+        return $this->historical(new DateTime('today'), $base, $targets);
     }
 
     public function historical($date, $base = 'EUR', $targets = [])
     {
-        return new Result($base, $date, ['USD' => 1.1933]);
+        $rates = [];
+        foreach ($targets as $currency) {
+            $rates[$currency] = 1.337;
+        }
+        $rates['USD'] = 1.1933;
+
+        return new Result($base, $date, $rates);
     }
 }

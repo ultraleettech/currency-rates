@@ -1,6 +1,9 @@
 # Changelog
 
 ## Unreleased
+### Added
+- Fluent interface for API drivers.
+
 ### Changed
 - Improve usage instructions.
 - Improve the way configuration is passed to custom providers.
