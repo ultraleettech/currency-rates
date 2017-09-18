@@ -3,6 +3,7 @@
 ## Unreleased
 ### Added
 - Fluent interface for API drivers.
+- Driver for Yahoo Finance latest exchange rates.
 
 ### Changed
 - Improve usage instructions.

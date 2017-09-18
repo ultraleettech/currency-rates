@@ -10,7 +10,11 @@ A PHP library for interacting with various currency exchange rates APIs. It prov
 
 ## Services
 Currently available:
-- [Fixer.io](http://fixer.io)
+
+Identifier  | Name
+----------- | -----------------------------------------------------------------
+fixer       | [Fixer.io](http://fixer.io)
+yahoo       | [Yahoo Finance](https://finance.yahoo.com/currency-converter/) (latest rates only)
 
 We are working on adding drivers for other services. Our API is easily extendable so you can add your own drivers (see below for instructions). When you do, feel free to contact us and send your implementation so we can integrate it into the official package.
 

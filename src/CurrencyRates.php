@@ -5,6 +5,7 @@ namespace Ultraleet\CurrencyRates;
 use Ultraleet\CurrencyRates\Contracts\Factory;
 use Ultraleet\CurrencyRates\Providers\DummyProvider;
 use Ultraleet\CurrencyRates\Providers\FixerProvider;
+use Ultraleet\CurrencyRates\Providers\YahooProvider;
 use GuzzleHttp\Client as GuzzleClient;
 use Closure;
 use InvalidArgumentException;
@@ -40,6 +41,16 @@ class CurrencyRates implements Factory
     protected function createFixerDriver()
     {
         return new FixerProvider(new GuzzleClient());
+    }
+
+    /**
+     * Create an instance of the specified driver.
+     *
+     * @return \Ultraleet\CurrencyRates\AbstractProvider
+     */
+    protected function createYahooDriver()
+    {
+        return new YahooProvider(new GuzzleClient());
     }
 
     /**
