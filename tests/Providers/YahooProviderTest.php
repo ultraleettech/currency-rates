@@ -6,6 +6,7 @@ use Ultraleet\CurrencyRates\Providers\YahooProvider;
 use DateTime;
 use Mockery as m;
 use PHPUnit\Framework\TestCase as PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\Error\Warning as PHPUnit_Framework_Error_Warning;
 
 class YahooProviderTest extends PHPUnit_Framework_TestCase
 {
@@ -56,12 +57,11 @@ class YahooProviderTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('0.8811', $result->getRate('GBP'));
     }
 
-    /**
-     * @expectedException PHPUnit\Framework\Error\Warning
-     * @expectedExceptionMessage Yahoo Finance API does not provide historical rates
-     */
     public function testHistoricalTriggersWarningAndReturnsLatestResults()
     {
+        $this->expectException(PHPUnit_Framework_Error_Warning::class);
+        $this->expectExceptionMessage('Yahoo Finance API does not provide historical rates');
+
         $driver = new YahooProvider($this->mock($this->responses['success']));
         $result = $driver->historical(new DateTime('2001-01-03'), 'EUR', ['GBP']);
 
