@@ -113,7 +113,20 @@ class YahooProvider extends AbstractProvider
     }
 
     /**
-     * Get historical currency exchange rates.
+     * Overriden method - historical rates are unsupported by Yahoo Finance API
+     *
+     * @param mixed $date Can be a string, a DateTime object, or null to unset.
+     * @return self
+     */
+    public function date($date = null)
+    {
+        trigger_error('Yahoo Finance API does not provide historical rates', E_USER_WARNING);
+
+        return $this;
+    }
+
+    /**
+     * Unsupported by Yahoo Finance API.
      *
      * @param  \DateTime $date
      * @param  string    $base
@@ -122,10 +135,10 @@ class YahooProvider extends AbstractProvider
      */
     public function historical($date, $base = 'EUR', $targets = [])
     {
-        // Yahoo no longer provides historical rates...
+        // Yahoo Finance API no longer provides historical rates...
+        // Let's just trigger a warning and return latest rates instead.
+        $this->date($date);
 
-        // We need to figure out how to handle this. In the mean time,
-        // let's just return latest rates instead...
         return $this->latest($base, $targets);
     }
 

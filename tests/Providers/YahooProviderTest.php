@@ -56,12 +56,19 @@ class YahooProviderTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('0.8811', $result->getRate('GBP'));
     }
 
-    /*
-    public function testHistoricalReturnsValidResult()
+    /**
+     * @expectedException PHPUnit\Framework\Error\Warning
+     * @expectedExceptionMessage Yahoo Finance API does not provide historical rates
+     */
+    public function testHistoricalTriggersWarningAndReturnsLatestResults()
     {
-        // skip for now
+        $driver = new YahooProvider($this->mock($this->responses['success']));
+        $result = $driver->historical(new DateTime('2001-01-03'), 'EUR', ['GBP']);
+
+        // should proxy latest()
+        $this->assertInstanceOf('Ultraleet\CurrencyRates\Result', $result);
+        $this->assertEquals('0.8811', $result->getRate('GBP'));
     }
-    */
 
     /**
      * @expectedException Ultraleet\CurrencyRates\Exceptions\ResponseException
