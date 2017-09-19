@@ -1,7 +1,7 @@
 # CurrencyRates
 
 [![PHP version](https://badge.fury.io/ph/ultraleet%2Fcurrency-rates.svg)](https://badge.fury.io/ph/ultraleet%2Fcurrency-rates)
-[![Build Status](https://travis-ci.org/ultraleettech/currency-rates.svg)](https://travis-ci.org/ultraleettech/currency-rates)
+[![Build Status](https://travis-ci.org/ultraleettech/currency-rates.svg?branch=1.1)](https://travis-ci.org/ultraleettech/currency-rates)
 [![Latest Stable Version](https://poser.pugx.org/ultraleet/currency-rates/version)](https://packagist.org/packages/ultraleet/currency-rates)
 [![Total Downloads](https://poser.pugx.org/ultraleet/currency-rates/downloads)](https://packagist.org/packages/ultraleet/currency-rates)
 [![License](https://poser.pugx.org/ultraleet/currency-rates/license)](https://packagist.org/packages/ultraleet/currency-rates)

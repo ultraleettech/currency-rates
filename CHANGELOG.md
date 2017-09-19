@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## [1.1.0] - 2017-09-19
 ### Added
 - Fluent interface for API drivers.
 - Driver for Yahoo Finance latest exchange rates.
