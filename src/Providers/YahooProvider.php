@@ -69,6 +69,11 @@ class YahooProvider extends AbstractProvider
         // Query all supported targets in case none were specified
         if (empty($targets)) {
             $targets = $this->currencies;
+
+            // unset base currency
+            if ($key = array_search($base, $targets)) {
+                unset($targets[$key]);
+            }
         }
 
         // Build query
