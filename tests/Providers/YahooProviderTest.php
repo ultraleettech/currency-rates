@@ -28,9 +28,6 @@ class YahooProviderTest extends PHPUnit_Framework_TestCase
                 ],
             ],
         ],
-        'error' => [
-            'error' => 'Not found',
-        ],
         'invalid' => [
             'random' => 'result',
         ],
@@ -72,17 +69,6 @@ class YahooProviderTest extends PHPUnit_Framework_TestCase
         // should proxy latest()
         $this->assertInstanceOf('Ultraleet\CurrencyRates\Result', $result);
         $this->assertEquals('0.8811', $result->getRate('GBP'));
-    }
-
-    /**
-     * @expectedException Ultraleet\CurrencyRates\Exceptions\ResponseException
-     * @expectedExceptionMessage Not found
-     */
-    public function testQueryThrowsExceptionWhenAPIRequestReturnsError()
-    {
-        // TODO: use actual error
-        $driver = new YahooProvider($this->mock($this->responses['error']));
-        $result = $driver->latest();
     }
 
     /**

@@ -171,8 +171,6 @@ class YahooProvider extends AbstractProvider
 
         if (isset($response['query']) && isset($response['query']['results'])) {
             return $response['query']['results'];
-        } elseif (isset($response['error'])) { // TODO
-            throw new ResponseException($response['error']);
         } else {
             throw new ResponseException('Response body is malformed.');
         }
