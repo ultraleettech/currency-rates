@@ -27,6 +27,12 @@ class Result implements ResultContract
     protected $rates;
 
     /**
+     * All of the converted amounts.
+     * @var array
+     */
+    protected $converted;
+
+    /**
      * Result constructor.
      *
      * @param string $base
@@ -92,6 +98,29 @@ class Result implements ResultContract
         }
 
         return null;
+    }
+
+    /**
+     * Get all requested currency conversions.
+     *
+     * @return array
+     */
+    public function getConverted()
+    {
+        return $this->converted;
+    }
+
+    /**
+     * Set all requested currency conversions.
+     *
+     * @param array
+     * @return void
+     */
+    public function setConverted($converted)
+    {
+        $this->converted = $converted;
+
+        return $this;
     }
 
     /*

@@ -66,4 +66,15 @@ class AbstractProviderTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($resultLatestTargets, $resultTargets);
         $this->assertEquals($resultLatestBoth, $resultBoth);
     }
+
+    public function testConvert()
+    {
+        $result = $this->driver->target(['GBP', 'USD'])->amount(2)->get();
+        $expected = [
+            'GBP' => 2.674,
+            'USD' => 2.3866,
+        ];
+
+        $this->assertEquals($result->converted, $expected);
+    }
 }

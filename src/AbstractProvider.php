@@ -12,6 +12,7 @@ abstract class AbstractProvider implements ProviderContract
     protected $base = 'EUR';
     protected $targets = [];
     protected $date = null;
+    protected $amount = 1;
 
     /**
      * Set the configuration array for this provider.
@@ -74,6 +75,19 @@ abstract class AbstractProvider implements ProviderContract
     }
 
     /**
+     * Set the amount of base currency to convert.
+     *
+     * @param float
+     * @return self
+     */
+    public function amount($amount)
+    {
+        $this->amount = $amount;
+
+        return $this;
+    }
+
+    /**
      * Query the API.
      *
      * @return \Ultraleet\CurrencyRates\Contracts\Result
@@ -81,9 +95,23 @@ abstract class AbstractProvider implements ProviderContract
     public function get()
     {
         if ($this->date) {
-            return $this->historical($this->date, $this->base, $this->targets);
+            $result = $this->historical($this->date, $this->base, $this->targets);
         } else {
-            return $this->latest($this->base, $this->targets);
+            $result = $this->latest($this->base, $this->targets);
         }
+
+        // perform conversion if requested
+        if ($this->amount !== 1) {
+            $converted = $result->rates;
+
+            foreach ($converted as $key => $value) {
+                $converted[$key] = $this->amount * $value;
+            }
+
+            // attach converted values to results
+            $result->setConverted($converted);
+        }
+
+        return $result;
     }
 }

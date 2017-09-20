@@ -17,6 +17,10 @@ class ResultTest extends PHPUnit_Framework_TestCase
     {
         $this->base = 'EUR';
         $this->date = new DateTime('2017-09-12');
+        $this->converted = [
+            'USD' => 1.1933,
+            'GBP' => 0.89878,
+        ];
         $this->rates = [
             'USD' => 1.1933,
             'GBP' => 0.89878,
@@ -63,5 +67,12 @@ class ResultTest extends PHPUnit_Framework_TestCase
 
         $this->expectExceptionMessage('Undefined property:');
         $this->result->foo;
+    }
+
+    public function testConvertedSetAndGet()
+    {
+        $this->result->setConverted($this->converted);
+
+        $this->assertEquals($this->converted, $this->result->converted);
     }
 }

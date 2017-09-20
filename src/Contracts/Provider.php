@@ -58,6 +58,14 @@ interface Provider
     public function date($date);
 
     /**
+     * Set the amount of base currency to convert.
+     *
+     * @param float
+     * @return self
+     */
+    public function amount($amount);
+
+    /**
      * Query the API.
      *
      * @return \Ultraleet\CurrencyRates\Contracts\Result

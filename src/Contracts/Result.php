@@ -19,11 +19,19 @@ interface Result
     public function getDate();
 
     /**
-     * Get all requested currency rates.
+     * Get all requested currency conversions.
      *
      * @return array
      */
-    public function getRates();
+    public function getConverted();
+
+    /**
+     * Set all requested currency conversions.
+     *
+     * @param array
+     * @return void
+     */
+    public function setConverted($converted);
 
     /**
      * Get the rate for the given currency.
