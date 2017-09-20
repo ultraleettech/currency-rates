@@ -107,7 +107,7 @@ class Result implements ResultContract
      */
     public function getConverted()
     {
-        return $this->converted;
+        return $this->converted ? $this->converted : $this->rates;
     }
 
     /**
