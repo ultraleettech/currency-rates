@@ -19,6 +19,22 @@ interface Result
     public function getDate();
 
     /**
+     * Get all requested currency rates.
+     *
+     * @return array
+     */
+    public function getRates();
+
+    /**
+     * Get the rate for the given currency.
+     * Must return null if currency is not found in the result.
+     *
+     * @param string $currency
+     * @return float|null
+     */
+    public function getRate($currency);
+
+    /**
      * Get all requested currency conversions.
      *
      * @return array
@@ -32,13 +48,4 @@ interface Result
      * @return void
      */
     public function setConverted($converted);
-
-    /**
-     * Get the rate for the given currency.
-     * Must return null if currency is not found in the result.
-     *
-     * @param string $currency
-     * @return float|null
-     */
-    public function getRate($currency);
 }
