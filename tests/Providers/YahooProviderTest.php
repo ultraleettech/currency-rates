@@ -17,6 +17,24 @@ class YahooProviderTest extends PHPUnit_Framework_TestCase
                 'lang' => 'en-US',
                 'results' => [
                     'rate' => [
+                        'id' => 'EURGBP',
+                        'Name' => 'EUR/GBP',
+                        'Rate' => '0.8811',
+                        'Date' => '9/18/2017',
+                        'Time' => '2:47pm',
+                        'Ask' => '0.8811',
+                        'Bid' => '0.8811',
+                    ],
+                ],
+            ],
+        ],
+        'success2' => [
+            'query' => [
+                'count' => 1,
+                'created' => '2017-09-18T13:47:13Z',
+                'lang' => 'en-US',
+                'results' => [
+                    'rate' => [
                         [
                             'id' => 'EURGBP',
                             'Name' => 'EUR/GBP',
@@ -60,6 +78,14 @@ class YahooProviderTest extends PHPUnit_Framework_TestCase
         return $client;
     }
 
+    public function testIgnoresNotAvailableResults()
+    {
+        $driver = new YahooProvider($this->mock($this->responses['success2']));
+        $result = $driver->latest('EUR', ['GBP']);
+
+        $this->assertEquals(1, count($result->rates));
+    }
+
     public function testLatestReturnsValidResult()
     {
         $driver = new YahooProvider($this->mock($this->responses['success']));
@@ -68,6 +94,7 @@ class YahooProviderTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Ultraleet\CurrencyRates\Result', $result);
         $this->assertEquals('0.8811', $result->getRate('GBP'));
     }
+
 
     public function testHistoricalTriggersWarning()
     {

@@ -62,6 +62,6 @@ class ResultTest extends PHPUnit_Framework_TestCase
         }
 
         $this->expectExceptionMessage('Undefined property:');
-        $this->foo;
+        $this->result->foo;
     }
 }

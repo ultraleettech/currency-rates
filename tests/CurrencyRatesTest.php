@@ -90,4 +90,13 @@ class CurrencyRatesTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(['test', 'dummy'], array_keys($this->factory->getDrivers()));
     }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Driver [foo] not supported.
+     */
+    public function testUnsupportedDriver()
+    {
+        $this->factory->driver('foo');
+    }
 }
