@@ -48,4 +48,20 @@ class ResultTest extends PHPUnit_Framework_TestCase
         $this->assertNull($this->result->getRate('NOK'));
         $this->assertNull($this->result->getRate('foobar'));
     }
+
+    public function testMagicGetter()
+    {
+        $this->assertEquals($this->base, $this->result->base);
+        $this->assertEquals($this->date, $this->result->date);
+        $this->assertEquals($this->rates, $this->result->rates);
+
+        if (class_exists('PHPUnit_Framework_Error_Notice')) {
+            $this->expectException('PHPUnit_Framework_Error_Notice');
+        } else {
+            $this->expectException('PHPUnit\Framework\Error\Notice');
+        }
+
+        $this->expectExceptionMessage('Undefined property:');
+        $this->foo;
+    }
 }

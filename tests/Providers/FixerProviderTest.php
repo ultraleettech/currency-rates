@@ -40,7 +40,7 @@ class FixerProviderTest extends PHPUnit_Framework_TestCase
     public function testLatestReturnsValidResult()
     {
         $driver = new FixerProvider($this->mock($this->responses['success']));
-        $result = $driver->latest();
+        $result = $driver->latest('USD', ['EUR']); // just setting args to mock coverage here
 
         $this->assertInstanceOf('Ultraleet\CurrencyRates\Result', $result);
         $this->assertEquals('0.90243', $result->getRate('GBP'));

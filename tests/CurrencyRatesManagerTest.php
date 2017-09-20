@@ -13,4 +13,11 @@ class CurrencyRatesManagerTest extends CurrencyRatesTest
     {
         $this->factory = new CurrencyRatesManager(new \stdClass);
     }
+
+    public function testGetDefaultDriver()
+    {
+        $provider = $this->factory->getDefaultDriver();
+
+        $this->assertEquals('fixer', $provider);
+    }
 }

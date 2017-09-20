@@ -17,14 +17,30 @@ class YahooProviderTest extends PHPUnit_Framework_TestCase
                 'lang' => 'en-US',
                 'results' => [
                     'rate' => [
-                        'id' => 'EURGBP',
-                        'Name' => 'EUR/GBP',
-                        'Rate' => '0.8811',
-                        'Date' => '9/18/2017',
-                        'Time' => '2:47pm',
-                        'Ask' => '0.8811',
-                        'Bid' => '0.8811',
+                        [
+                            'id' => 'EURGBP',
+                            'Name' => 'EUR/GBP',
+                            'Rate' => '0.8811',
+                            'Date' => '9/18/2017',
+                            'Time' => '2:47pm',
+                            'Ask' => '0.8811',
+                            'Bid' => '0.8811',
+                        ],[
+                            'id' => 'EURXXX',
+                            'Name' => 'N/A',
+                            'Rate' => 'N/A',
+                            'Date' => 'N/A',
+                            'Time' => 'N/A',
+                            'Ask' => 'N/A',
+                            'Bid' => 'N/A',
+                        ],
                     ],
+                ],
+            ],
+        ],
+        'norate' => [
+            'query' => [
+                'results' => [
                 ],
             ],
         ],
@@ -53,7 +69,7 @@ class YahooProviderTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('0.8811', $result->getRate('GBP'));
     }
 
-    public function testHistoricalTriggersWarningAndReturnsLatestResults()
+    public function testHistoricalTriggersWarning()
     {
         if (class_exists('PHPUnit_Framework_Error_Warning')) {
             $this->expectException('PHPUnit_Framework_Error_Warning');
@@ -65,10 +81,23 @@ class YahooProviderTest extends PHPUnit_Framework_TestCase
 
         $driver = new YahooProvider($this->mock($this->responses['success']));
         $result = $driver->historical(new DateTime('2001-01-03'), 'EUR', ['GBP']);
+    }
+
+    public function testHistoricalReturnsLatestResults()
+    {
+        // suppress warning
+        $errorReporting = ini_get('error_reporting');
+        ini_set('error_reporting', 0);
+
+        $driver = new YahooProvider($this->mock($this->responses['success']));
+        $result = $driver->historical(new DateTime('2001-01-03'), 'EUR', ['GBP']);
 
         // should proxy latest()
         $this->assertInstanceOf('Ultraleet\CurrencyRates\Result', $result);
         $this->assertEquals('0.8811', $result->getRate('GBP'));
+
+        // reset error reporting
+        ini_set('error_reporting', $errorReporting);
     }
 
     /**
@@ -78,6 +107,16 @@ class YahooProviderTest extends PHPUnit_Framework_TestCase
     public function testQueryThrowsExceptionWhenAPIRequestReturnsInvalidResponse()
     {
         $driver = new YahooProvider($this->mock($this->responses['invalid']));
+        $result = $driver->latest();
+    }
+
+    /**
+     * @expectedException Ultraleet\CurrencyRates\Exceptions\ResponseException
+     * @expectedExceptionMessage Invalid results
+     */
+    public function testQueryThrowsExceptionOnInvalidResults()
+    {
+        $driver = new YahooProvider($this->mock($this->responses['norate']));
         $result = $driver->latest();
     }
 

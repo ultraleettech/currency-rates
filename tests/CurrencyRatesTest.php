@@ -41,6 +41,13 @@ class CurrencyRatesTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Ultraleet\CurrencyRates\Providers\DummyProvider', $provider);
     }
 
+    public function testDriverYahooReturnsYahooProviderInstance()
+    {
+        $provider = $this->factory->driver('yahoo');
+
+        $this->assertInstanceOf('Ultraleet\CurrencyRates\Providers\YahooProvider', $provider);
+    }
+
     public function testCallingSameDriverTwiceReturnsSameObject()
     {
         $provider1 = $this->factory->driver('dummy');

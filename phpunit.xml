@@ -16,6 +16,10 @@
     <filter>
         <whitelist>
             <directory>./src/</directory>
+            <exclude>
+                <file>./src/CurrencyRatesServiceProvider.php</file>
+                <file>./src/Facades/CurrencyRates.php</file>
+            </exclude>
         </whitelist>
     </filter>
 </phpunit>
