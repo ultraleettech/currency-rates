@@ -59,12 +59,17 @@ class ResultTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($this->date, $this->result->date);
         $this->assertEquals($this->rates, $this->result->rates);
 
+        // test that invalid property value triggers a notice and returns null
+        $errorReporting = ini_get('error_reporting');
+        ini_set('error_reporting', 0);
+        $this->assertNull($this->result->foo);
+        ini_set('error_reporting', $errorReporting);
+
         if (class_exists('PHPUnit_Framework_Error_Notice')) {
             $this->expectException('PHPUnit_Framework_Error_Notice');
         } else {
             $this->expectException('PHPUnit\Framework\Error\Notice');
         }
-
         $this->expectExceptionMessage('Undefined property:');
         $this->result->foo;
     }
