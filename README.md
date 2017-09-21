@@ -2,6 +2,7 @@
 
 [![codecov](https://codecov.io/gh/ultraleettech/currency-rates/branch/master/graph/badge.svg)](https://codecov.io/gh/ultraleettech/currency-rates)
 [![Build Status](https://travis-ci.org/ultraleettech/currency-rates.svg?branch=master)](https://travis-ci.org/ultraleettech/currency-rates)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/ultraleettech/currency-rates/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/ultraleettech/currency-rates/?branch=master)
 [![Latest Stable Version](https://poser.pugx.org/ultraleet/currency-rates/version)](https://packagist.org/packages/ultraleet/currency-rates)
 [![Latest Unstable Version](https://poser.pugx.org/ultraleet/currency-rates/v/unstable)](https://packagist.org/packages/ultraleet/currency-rates)
 [![Total Downloads](https://poser.pugx.org/ultraleet/currency-rates/downloads)](https://packagist.org/packages/ultraleet/currency-rates)

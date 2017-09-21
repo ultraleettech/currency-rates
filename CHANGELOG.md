@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## [1.2.0] - 2017-09-21
 ### Added
 - Currency conversion. (#1)
 
