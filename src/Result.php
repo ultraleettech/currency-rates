@@ -5,6 +5,14 @@ namespace Ultraleet\CurrencyRates;
 use Ultraleet\CurrencyRates\Contracts\Result as ResultContract;
 use DateTime;
 
+/**
+ * Encapsulates results from an API call.
+ *
+ * @property-read string    $base      The base currency
+ * @property-read \DateTime $date      The date of the resulting rates
+ * @property-read array     $rates     An array of currency-rate pairs
+ * @property-read array     $converted Converted rates (currency-amount pairs)
+ */
 class Result implements ResultContract
 {
     /**
@@ -85,10 +93,7 @@ class Result implements ResultContract
      */
     public function getRate($code)
     {
-        // the result won't have the base code in it,
-        // because that would always be 1. But to make
-        // dynamic code easier this prevents null if
-        // the base code is asked for
+        // Return 1 for base currency
         if ($code == $this->getBase()) {
             return 1.0;
         }
@@ -114,7 +119,7 @@ class Result implements ResultContract
      * Set all requested currency conversions.
      *
      * @param array
-     * @return void
+     * @return self
      */
     public function setConverted($converted)
     {
@@ -123,8 +128,11 @@ class Result implements ResultContract
         return $this;
     }
 
-    /*
+    /**
      * Magic getter function for getting property values.
+     *
+     * @param string $name Property name
+     * @return mixed
      */
     public function __get($name)
     {

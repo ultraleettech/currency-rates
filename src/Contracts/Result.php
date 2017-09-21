@@ -45,7 +45,7 @@ interface Result
      * Set all requested currency conversions.
      *
      * @param array
-     * @return void
+     * @return self
      */
     public function setConverted($converted);
 }

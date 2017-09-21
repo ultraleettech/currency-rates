@@ -3,7 +3,7 @@
 namespace Ultraleet\CurrencyRates;
 
 use Ultraleet\CurrencyRates\Contracts\Provider as ProviderContract;
-use Ultraleet\CurrencyRates\Contracts\Result;
+use Ultraleet\CurrencyRates\Contracts\Result as ResultContract;
 use Ultraleet\CurrencyRates\Exceptions\UnexpectedValueException;
 use DateTime;
 
@@ -102,7 +102,7 @@ abstract class AbstractProvider implements ProviderContract
         }
 
         // Ensure the result object is valid.
-        if (!$result instanceof Result) {
+        if (!$result instanceof ResultContract) {
             throw new UnexpectedValueException('Invalid result type');
         }
 
