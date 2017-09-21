@@ -98,7 +98,7 @@ class YahooProvider extends AbstractProvider
                 }
 
                 // Save the latest timestamp
-                if ($date < $ts = strtotime($result['Date'].' '.$result['Time'])) {
+                if ($date < $ts = strtotime($result['Date'] . ' ' . $result['Time'])) {
                     $date = $ts;
                 }
 
@@ -109,7 +109,7 @@ class YahooProvider extends AbstractProvider
 
             return new Result(
                 $base,
-                new DateTime('@'.$date),
+                new DateTime('@' . $date),
                 $rates
             );
         } else {

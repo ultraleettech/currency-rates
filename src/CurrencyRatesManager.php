@@ -21,7 +21,7 @@ class CurrencyRatesManager extends Manager implements Factory
     /**
      * Create a new manager instance.
      *
-     * @param  \Illuminate\Foundation\Application   $app
+     * @param  mixed
      * @return void
      */
     public function __construct($app)

@@ -2,8 +2,9 @@
 
 namespace Ultraleet\CurrencyRates;
 
-use Illuminate\Http\Request;
 use Ultraleet\CurrencyRates\Contracts\Provider as ProviderContract;
+use Ultraleet\CurrencyRates\Contracts\Result;
+use Ultraleet\CurrencyRates\Exceptions\UnexpectedValueException;
 use DateTime;
 
 abstract class AbstractProvider implements ProviderContract
@@ -100,7 +101,12 @@ abstract class AbstractProvider implements ProviderContract
             $result = $this->latest($this->base, $this->targets);
         }
 
-        // perform conversion if requested
+        // Ensure the result object is valid.
+        if (!$result instanceof Result) {
+            throw new UnexpectedValueException('Invalid result type');
+        }
+
+        // Perform conversion if requested.
         if ($this->amount !== 1) {
             $converted = $result->rates;
 
@@ -108,7 +114,7 @@ abstract class AbstractProvider implements ProviderContract
                 $converted[$key] = round($this->amount * $value, 2);
             }
 
-            // attach converted values to results
+            // Attach converted values to results.
             $result->setConverted($converted);
         }
 

@@ -3,6 +3,7 @@
 namespace Tests;
 
 use Tests\Fixtures\TestProviderStub;
+use Tests\Fixtures\InvalidProviderStub;
 use PHPUnit\Framework\TestCase as PHPUnit_Framework_TestCase;
 use DateTime;
 
@@ -76,5 +77,16 @@ class AbstractProviderTest extends PHPUnit_Framework_TestCase
         ];
 
         $this->assertEquals($result->converted, $expected);
+    }
+
+    /**
+     * @expectedException \Ultraleet\CurrencyRates\Exceptions\UnexpectedValueException
+     * @expectedExceptionMessage Invalid result type
+     */
+    public function testInvalidProviderImplementation()
+    {
+        $driver = new InvalidProviderStub;
+
+        $driver->get();
     }
 }

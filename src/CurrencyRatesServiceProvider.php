@@ -21,7 +21,7 @@ class CurrencyRatesServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(Factory::class, function ($app) {
+        $this->app->singleton(Factory::class, function($app) {
             return new CurrencyRatesManager($app);
         });
     }

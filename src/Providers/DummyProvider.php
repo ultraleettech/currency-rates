@@ -11,7 +11,7 @@ class DummyProvider extends AbstractProvider
 {
 
     /**
-     * @var List of currencies to use. Mimics the currencies provided by fixer.io (ECB).
+     * @var array List of currencies to use. Mimics the currencies provided by fixer.io (ECB).
      */
     private $currencies = [
         'AUD', 'BGN', 'BRL', 'CAD', 'CHF', 'CNY', 'CZK', 'DKK', 'EUR', 'GBP',
