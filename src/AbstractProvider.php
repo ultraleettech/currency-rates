@@ -105,7 +105,7 @@ abstract class AbstractProvider implements ProviderContract
             $converted = $result->rates;
 
             foreach ($converted as $key => $value) {
-                $converted[$key] = $this->amount * $value;
+                $converted[$key] = round($this->amount * $value, 2);
             }
 
             // attach converted values to results

@@ -71,8 +71,8 @@ class AbstractProviderTest extends PHPUnit_Framework_TestCase
     {
         $result = $this->driver->target(['GBP', 'USD'])->amount(2)->get();
         $expected = [
-            'GBP' => 2.674,
-            'USD' => 2.3866,
+            'GBP' => 2.67,
+            'USD' => 2.39,
         ];
 
         $this->assertEquals($result->converted, $expected);
