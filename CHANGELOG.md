@@ -4,6 +4,9 @@
 ### Added
 - Currency conversion. (#1)
 
+### Deprecated
+- `latest` and `historical` API methods. Use fluent interface instead! Will be removed in v2.0.
+
 ## [1.1.0] - 2017-09-19
 ### Added
 - Fluent interface for API drivers.

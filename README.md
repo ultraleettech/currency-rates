@@ -1,9 +1,9 @@
 # Currency Rates
 
-[![PHP version](https://badge.fury.io/ph/ultraleet%2Fcurrency-rates.svg)](https://badge.fury.io/ph/ultraleet%2Fcurrency-rates)
 [![codecov](https://codecov.io/gh/ultraleettech/currency-rates/branch/master/graph/badge.svg)](https://codecov.io/gh/ultraleettech/currency-rates)
 [![Build Status](https://travis-ci.org/ultraleettech/currency-rates.svg?branch=master)](https://travis-ci.org/ultraleettech/currency-rates)
 [![Latest Stable Version](https://poser.pugx.org/ultraleet/currency-rates/version)](https://packagist.org/packages/ultraleet/currency-rates)
+[![Latest Unstable Version](https://poser.pugx.org/ultraleet/currency-rates/v/unstable)](https://packagist.org/packages/ultraleet/currency-rates)
 [![Total Downloads](https://poser.pugx.org/ultraleet/currency-rates/downloads)](https://packagist.org/packages/ultraleet/currency-rates)
 [![License](https://poser.pugx.org/ultraleet/currency-rates/license)](https://packagist.org/packages/ultraleet/currency-rates)
 
@@ -93,7 +93,7 @@ $currencyRates = new CurrencyRates;
 
 ## Usage
 
-In the initial version, the Currency Rates API exposed two methods for each service driver. One was used for querying the latest exchange rates, and the other for retrieving historical data. Those methods still work, and examples can be found below. However, in version 1.1 we introduced a fluent interface for interacting with the API, which the documentation now emphasizes.
+In the initial version, the Currency Rates API exposed two methods for each service driver. One was used for querying the latest exchange rates, and the other for retrieving historical data. However, in version 1.1.0 we introduced a fluent interface for interacting with the API, and the original methods have been **deprecated** since 1.2.0. If you are still using those, please consider updating your code to use the fluent interface as shown below. The original methods will be removed in Currency Rates 2.0.
 
 Note, that the following code snippets assume that you have your service object instantiated somehow (*e.g.* via dependency injection or by fetching from a service container) and stored in a variable called `$currencyRates`. If you are using Laravel, you can skip all that, and simply substitute `CurrencyRates::...` for `$currencyRates->...` to use the facade instead. 
 
@@ -114,18 +114,12 @@ To get the latest rates for the default base currency (EUR) from the [fixer.io](
 
 ```php
 $result = $currencyRates->driver('fixer')->get();
-
-// this also works:
-$result = $currencyRates->driver('fixer')->latest();
 ```
 
 To get the rates for a different base currency:
 
 ```php
 $result = $currencyRates->driver('fixer')->base('USD')->get();
-
-// this also works:
-$result = $currencyRates->driver('fixer')->latest('USD');
 ```
 
 These calls return the rates for all currencies provided by the service driver. You can optionally specify the target currencies:
@@ -136,9 +130,6 @@ $result = $currencyRates->driver('fixer')->base('USD')->target(['EUR', 'GBP'])->
 
 // you can provide a single target currency as a string
 $result = $currencyRates->driver('fixer')->target('USD')->get();
-
-// this also works:
-$result = $currencyRates->driver('fixer')->latest('USD', ['EUR', 'GBP']);
 ```
 
 ### Historical Rates
@@ -149,15 +140,9 @@ For historical rates, you need to specify the date via the `date()` method. This
 $result = $currencyRates->driver('fixer')->date('2001-01-03')->get();
 $result = $currencyRates->driver('fixer')->date('2001-01-03')->base('USD')->get();
 $result = $currencyRates->driver('fixer')->date('2001-01-03')->base('USD')->target('EUR')->get();
-
-// Alternatively, you can use the following. Note, that the date provided
-// must be a DateTime object in this formulation, and target must be an array:
-$result = $currencyRates->driver('fixer')->historical(new \DateTime('2001-01-03'));
-$result = $currencyRates->driver('fixer')->historical(new \DateTime('2001-01-03'), 'USD');
-$result = $currencyRates->driver('fixer')->historical(new \DateTime('2001-01-03'), 'USD', ['EUR']);
 ```
 
-### Fluent Interface Notes
+### Notes on Fluent Setters
 
 The `base`, `target`, and `date` methods set the values of the parameters used in the API query performed by the `get` method. This means, that any previous values that have not been explicitly reset will be reused when making subsequent calls to the API.
 
@@ -188,9 +173,24 @@ $rates = $result->rates;        // Array of exchange rates
 $gbp = $result->rates['GBP'];   // Rate for the specific currency
 ```
 
+## Currency Conversion
+
+Version 1.2.0 of Currency Rates introduced currency conversion. This is a simple convenience feature, that converts the rates returned by an API based on a given base amount, and adds the values to the result:
+
+```php
+// Set the amount by chaining in an amount() call
+$result = $currencyRates->driver('fixer')->amount(100)->target('USD')->get();
+
+// Get the converted values
+$values = $result->getCnverted();   // returns an array of values
+
+// You can also access the results as a property:
+$value = $result->converted['USD']; // returns 120.07
+```
+
 ## Exceptions
 
-CurrencyRate provides 2 exceptions it can throw when encountering errors. `ConnectionException` is thrown when there is a problem connecting to the API end point. For invalid requests and unexpected responses, it throws a `ResponseException`.
+Currency Rate provides 2 exceptions it can throw when encountering errors. `ConnectionException` is thrown when there is a problem connecting to the API end point. For invalid requests and unexpected responses, it throws a `ResponseException`.
 
 ## Custom Providers
 
@@ -238,6 +238,6 @@ class ExtendedCurrencyRates extends CurrencyRates
 } 
 ```
 
-(Note: driver name strings (when calling the `driver('name')` method) are in *snake_case* while they are expected to be in *PascalCase* in the above `create[Name]Driver` method name. A driver called *'my_provider'* is hence constructed in a method called *createMyProvider()*.)
+(Note: driver name strings (when calling the `driver('name')` method) are in *snake_case* while they are expected to be in *PascalCase* (aka StudlyCaps case) in the above `create[Name]Driver` method name. A driver called *'my_provider'* is hence constructed in a method called *createMyProvider()*.)
 
 Then, all you need to do is register or instantiate the extended service instead of the original one.
