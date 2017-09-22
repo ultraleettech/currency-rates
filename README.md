@@ -176,14 +176,14 @@ $gbp = $result->rates['GBP'];   // Rate for the specific currency
 
 ## Currency Conversion
 
-Version 1.2.0 of Currency Rates introduced currency conversion. This is a simple convenience feature, that converts the rates returned by an API based on a given base amount, and adds the values to the result:
+Version 1.2.0 of Currency Rates introduced currency conversion. This is a simple convenience feature, that converts the rates returned by an API based on a given base amount, and adds the values to the result object:
 
 ```php
 // Set the amount by chaining in an amount() call
 $result = $currencyRates->driver('fixer')->amount(100)->target('USD')->get();
 
 // Get the converted values
-$values = $result->getCnverted();   // returns an array of values
+$values = $result->getConverted();   // returns an array of values
 
 // You can also access the results as a property:
 $value = $result->converted['USD']; // returns 120.07
