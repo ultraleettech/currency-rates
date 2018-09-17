@@ -14,7 +14,7 @@ use GuzzleHttp\Exception\TransferException;
 class FixerProvider extends AbstractProvider
 {
     protected $guzzle;
-    protected $url = "http://api.fixer.io";
+    protected $url = "https://data.fixer.io/api/";
 
     /**
      * Class constructor.
